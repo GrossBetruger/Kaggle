@@ -1,0 +1,12 @@
+
+without one-hot encoding:
+MAE: 17373.298817427385
+MSE: 933601468.0662231
+
+
+with one-hot encoding on ['Street', 'Alley', 'LandContour', 'LandSlope', 'RoofMatl', 'RoofStyle',
+                       'HouseStyle', 'Heating', 'Exterior2nd', 'Exterior1st']:
+MAE: 17591.45765560166
+MSE: 952327744.7997769
+
+-- slightly worse, better choose the features for encoding more carefully
