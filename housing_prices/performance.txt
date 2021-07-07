@@ -10,3 +10,7 @@ MAE: 17591.45765560166
 MSE: 952327744.7997769
 
 -- slightly worse, better choose the features for encoding more carefully
+
+work with pipelines and OrdinalEncoder instead of LabelEncoder:
+MAE: 17680.888423236516
+MSE: 948659918.487406
