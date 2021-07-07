@@ -59,8 +59,8 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X,
                                                         y,
                                                         test_size=0.33,
-                                                        random_state = 42)
-    rf_model = RandomForestRegressor()
+                                                        random_state=42)
+    rf_model = RandomForestRegressor(random_state=42)
     rf_model.fit(X_train, y_train)
     pred = rf_model.predict(X_test)
     print("MAE:", mean_absolute_error(pred, y_test))
