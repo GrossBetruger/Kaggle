@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from typing import List
@@ -7,7 +8,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.pipeline import Pipeline
 
 
@@ -67,3 +68,6 @@ if __name__ == "__main__":
     pred = clf.predict(X_test)
     print("MAE:", mean_absolute_error(pred, y_test))
     print("MSE:", mean_squared_error(pred, y_test))
+    cv_scores = cross_val_score(clf, X_test, y_test, cv=5,scoring='neg_mean_absolute_error')
+    print("Cross Validation Scores:",
+          -1 * cv_scores, f"(mean: {-1 * np.mean(cv_scores)})")
