@@ -70,4 +70,4 @@ if __name__ == "__main__":
     print("MSE:", mean_squared_error(pred, y_test))
     cv_scores = cross_val_score(clf, X_test, y_test, cv=5,scoring='neg_mean_absolute_error')
     print("Cross Validation Scores:",
-          -1 * cv_scores, f"(mean: {-1 * np.mean(cv_scores)})")
+          -1 * cv_scores, f"(mean: {-1 * cv_scores.mean()})")
