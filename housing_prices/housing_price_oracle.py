@@ -1,5 +1,6 @@
-import numpy as np
+import time
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from typing import List
 from pathlib import Path
@@ -10,7 +11,8 @@ from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.pipeline import Pipeline
-
+from xgboost import XGBRegressor
+from multiprocessing import cpu_count
 
 def read_data(file_name):
     return pd.read_csv(Path("data") / file_name)
@@ -58,16 +60,25 @@ if __name__ == "__main__":
                                                         y,
                                                         test_size=0.33,
                                                         random_state=42)
-    rf_model = RandomForestRegressor(random_state=42)
-    clf = Pipeline(steps=[
-        ('preprocessor', pre_proc),
-        ('model', rf_model),
-    ])
 
-    clf.fit(X_train, y_train)
-    pred = clf.predict(X_test)
-    print("MAE:", mean_absolute_error(pred, y_test))
-    print("MSE:", mean_squared_error(pred, y_test))
-    cv_scores = cross_val_score(clf, X_test, y_test, cv=5,scoring='neg_mean_absolute_error')
-    print("Cross Validation Scores:",
-          -1 * cv_scores, f"(mean: {-1 * cv_scores.mean()})")
+    mae_results = dict()
+    timestamp = time.time()
+    for n_estimators in range(50, 350, 50):
+
+        rf_model = RandomForestRegressor(n_estimators=n_estimators,
+                                         n_jobs=cpu_count(),
+                                         random_state=42)
+        clf = Pipeline(steps=[
+            ('preprocessor', pre_proc),
+            ('model', rf_model),
+        ])
+
+        cv_scores = cross_val_score(clf, X_test, y_test, cv=3, scoring='neg_mean_absolute_error')
+        mae_results[n_estimators] = cv_scores.mean() * -1
+
+    print(f"toke {time.time() - timestamp} seconds")
+    plt.plot(mae_results.keys(), mae_results.values())
+    plt.xlabel("# Estimators")
+    plt.ylabel("MAE")
+    plt.title("Housing Price Prediction (Random Forest Regressor)")
+    plt.show()
