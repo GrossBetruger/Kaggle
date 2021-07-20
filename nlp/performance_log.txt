@@ -1,0 +1,4 @@
+version: 0 (commit: 59ab674e86a628d57bd80de3c76a50a4020b7cef)
+max_iter=500
+test_size=0.1
+accuracy=83%
