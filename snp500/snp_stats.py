@@ -83,7 +83,7 @@ if __name__ == '__main__':
     for i in range(1, 26):
         returns_for_period = passive_investment_simulator(i, Strategy.DollarCostAveraging)
         print(f"""returns for {i} years:
-                  mean: {np.mean(returns_for_period)})
+                  mean: {np.mean(returns_for_period)}
                   min: {np.min(returns_for_period)}
                   max: {np.max(returns_for_period)}
                   """)
