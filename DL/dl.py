@@ -1,7 +1,6 @@
-from enum import auto, Enum
-
 import pandas as pd
 
+from enum import auto, Enum
 from pathlib import Path
 from typing import Tuple
 from pandas.core.frame import DataFrame
@@ -54,6 +53,7 @@ def get_deep_model(num_features: int) -> keras.Sequential:
 
 def cereal_model_single_layer_main():
     model_t = ModelType.Deep
+
     X, y = prepare_cereal_data(model_t)
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
@@ -74,7 +74,7 @@ def cereal_model_single_layer_main():
     for i in range(5):
         x = X_test.iloc[[i]]
         y = list(y_test)[i]
-        print(f"model prediction: {model.predict([x])}, true value: {y}")
+        print(f"model prediction: {model.predict([x])[0][0]}, true value: {y}")
         print()
 
 
