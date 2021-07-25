@@ -41,7 +41,7 @@ def get_deep_model(num_features: int) -> keras.Sequential:
 
         # hidden ReLU layers
         layers.Dense(units=4, activation='relu', input_shape=[num_features]),
-        layers.Dense(units=3, activation='relu'),
+        layers.Dense(units=3, activation='elu'),
         layers.Dense(units=2, activation='relu'),
 
         # linear output layer (no activation)
@@ -65,11 +65,8 @@ def cereal_model_single_layer_main():
     else:
         raise Exception("Undefined Model Type")
 
-    for i in range(17):
-        X_train = pd.concat([X_train, X_train])  # augment super-small data set
-        y_train = pd.concat([y_train, y_train])  # augment super-small data set
-
-    model.fit(X_train, y_train)
+    num_epochs = 20000 if model_t is model_t.Deep else 1000
+    model.fit(X_train, y_train, epochs=num_epochs)
     score = model.evaluate(X_test, y_test, verbose=0)
     print(f'Test loss: {score[0]} / test MEA: {score[1]}')
     for i in range(5):
