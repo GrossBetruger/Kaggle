@@ -27,20 +27,35 @@ def normalize_zero_one(data: DataFrame):
     return pd.DataFrame(data_scaled)
 
 
-def prepare_cereal_data(model_type: ModelType) -> Tuple[DataFrame, Series]:
+def prepare_cereal_data(model_type: ModelType, encode_categorical=False) -> Tuple[DataFrame, Series]:
     cereal_data = pd.read_csv(Path("data") / "cereal.csv")
-    features = ['protein', 'fat', 'sodium', 'fiber',
-                'carbo', 'sugars', 'potass', 'vitamins', 'shelf', 'weight', 'cups',
-                'rating']
+    target = 'calories'
+    # features = ['protein', 'fat', 'sodium', 'fiber',
+    #             'carbo', 'sugars', 'potass', 'vitamins', 'shelf', 'weight', 'cups',
+    #             'rating']
+
+    # drop target leak column
+    cereal_data.drop('name', axis=1, inplace=True)
+
+    # handle categorical columns
+    categorical_cols = ['mfr', 'type']
+    if encode_categorical is False:  # dropping seems more successful for this dataset
+        cereal_data.drop(categorical_cols, axis=1, inplace=True)
+    else:
+        # one hot categoricals
+        cereal_data = pd.get_dummies(cereal_data, columns=categorical_cols)
+
     if model_type is ModelType.Single:
         features = ['fat', 'sugars']
-    X = cereal_data[features].copy()
+    y = cereal_data[target]
+
+    # drop target feature
+    X = cereal_data.drop(target, axis=1)
 
     # normalized values of X between [0, 1]
     # deep learning models tend to better with normalized input
     X = normalize_zero_one(X)
 
-    y = cereal_data['calories']
     return X, y
 
 
