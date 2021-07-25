@@ -9,9 +9,8 @@ from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
-from tensorflow.keras import layers
+from tensorflow.keras import layers, callbacks
 from sklearn import preprocessing
-
 
 tf.random.set_seed(42)
 
@@ -30,9 +29,6 @@ def normalize_zero_one(data: DataFrame):
 def prepare_cereal_data(model_type: ModelType, encode_categorical=False) -> Tuple[DataFrame, Series]:
     cereal_data = pd.read_csv(Path("data") / "cereal.csv")
     target = 'calories'
-    # features = ['protein', 'fat', 'sodium', 'fiber',
-    #             'carbo', 'sugars', 'potass', 'vitamins', 'shelf', 'weight', 'cups',
-    #             'rating']
 
     # drop target leak column
     cereal_data.drop('name', axis=1, inplace=True)
@@ -99,9 +95,22 @@ def cereal_model_single_layer_main():
         raise Exception("Undefined Model Type")
 
     num_epochs = 24000
-    history = model.fit(X_train, y_train, epochs=num_epochs)
+    early_stoping = callbacks.EarlyStopping(
+        min_delta=0.0005,
+        patience=200,
+        restore_best_weights=True,
+    )
+
+    history = model.fit(
+        X_train,
+        y_train,
+        validation_data=(X_test, y_test),
+        epochs=num_epochs,
+        callbacks=[early_stoping],
+    )
+
     history = pd.DataFrame(history.history)
-    history['loss'].plot()
+    history[['loss', 'val_loss']].plot()
     plt.show()
 
     for i in range(20):
