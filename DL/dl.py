@@ -1,16 +1,20 @@
-from enum import auto, Enum
-from pathlib import Path
-from typing import Tuple
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import sklearn.preprocessing
+import tensorflow as tf
+
+from enum import auto, Enum
+from pathlib import Path
+from typing import Tuple
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.keras import layers
 from sklearn import preprocessing
+
+
+tf.random.set_seed(42)
 
 
 class ModelType(Enum):
@@ -62,7 +66,8 @@ def get_deep_model(num_features: int) -> keras.Sequential:
         layers.Dense(units=1)
     ])
 
-    model.compile(optimizer="Adam", loss="mse", metrics=["mae"])
+    # opt = keras.optimizers.Adam(learning_rate=0.01)
+    model.compile(optimizer="adam", loss="mse", metrics=["mae"])
     return model
 
 
@@ -79,13 +84,13 @@ def cereal_model_single_layer_main():
     else:
         raise Exception("Undefined Model Type")
 
-    num_epochs = 3000
+    num_epochs = 24000
     history = model.fit(X_train, y_train, epochs=num_epochs)
     history = pd.DataFrame(history.history)
     history['loss'].plot()
     plt.show()
 
-    for i in range(5):
+    for i in range(20):
         x = X_test.iloc[[i]]
         y = list(y_test)[i]
         print(f"model prediction: {model.predict([x])[0][0]}, true value: {y}")
