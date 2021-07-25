@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import sklearn.preprocessing
 import tensorflow as tf
 
 from enum import auto, Enum
