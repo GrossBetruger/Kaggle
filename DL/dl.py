@@ -1,8 +1,9 @@
-import pandas as pd
-
 from enum import auto, Enum
 from pathlib import Path
 from typing import Tuple
+
+import matplotlib.pyplot as plt
+import pandas as pd
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 from sklearn.model_selection import train_test_split
@@ -65,10 +66,12 @@ def cereal_model_single_layer_main():
     else:
         raise Exception("Undefined Model Type")
 
-    num_epochs = 20000 if model_t is model_t.Deep else 1000
-    model.fit(X_train, y_train, epochs=num_epochs)
-    score = model.evaluate(X_test, y_test, verbose=0)
-    print(f'Test loss: {score[0]} / test MEA: {score[1]}')
+    num_epochs = 1500
+    history = model.fit(X_train, y_train, epochs=num_epochs)
+    history = pd.DataFrame(history.history)
+    history['loss'].plot()
+    plt.show()
+    
     for i in range(5):
         x = X_test.iloc[[i]]
         y = list(y_test)[i]
