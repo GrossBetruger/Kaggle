@@ -4,16 +4,24 @@ from typing import Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import sklearn.preprocessing
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.keras import layers
+from sklearn import preprocessing
 
 
 class ModelType(Enum):
     Deep = auto()
     Single = auto()
+
+
+def normalize_zero_one(data: DataFrame):
+    min_max_scaler = preprocessing.MinMaxScaler()
+    data_scaled = min_max_scaler.fit_transform(data)
+    return pd.DataFrame(data_scaled)
 
 
 def prepare_cereal_data(model_type: ModelType) -> Tuple[DataFrame, Series]:
@@ -24,6 +32,11 @@ def prepare_cereal_data(model_type: ModelType) -> Tuple[DataFrame, Series]:
     if model_type is ModelType.Single:
         features = ['fat', 'sugars']
     X = cereal_data[features].copy()
+
+    # normalized values of X between [0, 1]
+    # deep learning models tend to better with normalized input
+    X = normalize_zero_one(X)
+
     y = cereal_data['calories']
     return X, y
 
@@ -66,12 +79,12 @@ def cereal_model_single_layer_main():
     else:
         raise Exception("Undefined Model Type")
 
-    num_epochs = 1500
+    num_epochs = 3000
     history = model.fit(X_train, y_train, epochs=num_epochs)
     history = pd.DataFrame(history.history)
     history['loss'].plot()
     plt.show()
-    
+
     for i in range(5):
         x = X_test.iloc[[i]]
         y = list(y_test)[i]
