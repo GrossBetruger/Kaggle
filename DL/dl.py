@@ -43,10 +43,9 @@ def prepare_cereal_data(model_type: ModelType, encode_categorical=False) -> Tupl
 
     if model_type is ModelType.Single:
         features = ['fat', 'sugars']
-    y = cereal_data[target]
 
-    # drop target feature
-    X = cereal_data.drop(target, axis=1)
+    y = cereal_data.pop(target)
+    X = cereal_data
 
     # normalized values of X between [0, 1]
     # deep learning models tend to better with normalized input
@@ -81,7 +80,7 @@ def get_deep_model(num_features: int) -> keras.Sequential:
     return model
 
 
-def cereal_model_single_layer_main():
+def cereal_model_main():
     model_t = ModelType.Deep
 
     X, y = prepare_cereal_data(model_t)
@@ -96,8 +95,8 @@ def cereal_model_single_layer_main():
 
     num_epochs = 24000
     early_stoping = callbacks.EarlyStopping(
-        min_delta=0.0005,
-        patience=200,
+        min_delta=0.1,
+        patience=2000,
         restore_best_weights=True,
     )
 
@@ -121,4 +120,4 @@ def cereal_model_single_layer_main():
 
 
 if __name__ == '__main__':
-    cereal_model_single_layer_main()
+    cereal_model_main()
