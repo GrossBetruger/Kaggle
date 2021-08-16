@@ -2,24 +2,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import tensorflow.python.keras.callbacks
 
-
 from pathlib import Path
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
 from tensorflow.keras import layers
+
 model: keras.Sequential = keras.Sequential([
     layers.LayerNormalization(input_shape=(34,)),
-    # layers.Dropout(rate=0.25),
     layers.Dense(8, activation='relu'),
     layers.LayerNormalization(),
-    # layers.Dropout(rate=0.25),
     layers.Dense(4, activation='relu'),
     layers.LayerNormalization(),
     layers.Dense(1, activation='sigmoid')
 ])
-
-
 
 model.compile(
     optimizer='adam',
@@ -53,5 +49,7 @@ if __name__ == '__main__':
         verbose=1
     )
 
-    pd.DataFrame(history.history).loc[:, ['loss', 'val_loss']].plot()
+    history = pd.DataFrame(history.history)
+    history.loc[:, ['loss', 'val_loss']].plot()
+    history.loc[:, ['binary_accuracy', 'val_binary_accuracy']].plot()
     plt.show()
