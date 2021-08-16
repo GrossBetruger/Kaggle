@@ -1,18 +1,25 @@
+import matplotlib.pyplot as plt
 import pandas as pd
+import tensorflow.python.keras.callbacks
+
 
 from pathlib import Path
-
-import tensorflow.python.keras.callbacks
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
 from tensorflow.keras import layers
-
 model: keras.Sequential = keras.Sequential([
-    layers.Dense(4, activation='relu', input_shape=(34,)),
+    layers.LayerNormalization(input_shape=(34,)),
+    # layers.Dropout(rate=0.25),
+    layers.Dense(8, activation='relu'),
+    layers.LayerNormalization(),
+    # layers.Dropout(rate=0.25),
     layers.Dense(4, activation='relu'),
+    layers.LayerNormalization(),
     layers.Dense(1, activation='sigmoid')
 ])
+
+
 
 model.compile(
     optimizer='adam',
@@ -21,7 +28,7 @@ model.compile(
 )
 
 early_stopping = tensorflow.keras.callbacks.EarlyStopping(
-    patience=10,
+    patience=100,
     min_delta=0.001,
     restore_best_weights=True,
 )
@@ -36,12 +43,15 @@ if __name__ == '__main__':
     lonosphere_data.drop(['g'], axis=1, inplace=True)
     X = lonosphere_data
     X_train, X_test, y_train, y_test = train_test_split(X, y)
-    model.fit(
+    history = model.fit(
         X_train,
         y_train,
         validation_data=(X_test, y_test),
         batch_size=512,
-        epochs=20000,
+        epochs=1000,
         callbacks=[early_stopping],
         verbose=1
     )
+
+    pd.DataFrame(history.history).loc[:, ['loss', 'val_loss']].plot()
+    plt.show()
